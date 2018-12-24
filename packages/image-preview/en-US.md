@@ -17,21 +17,31 @@ ImagePreview([
 ]);
 ```
 
-#### Custom Start Position
+#### Custom config
+
 ```javascript
-ImagePreview([
-  'https://img.yzcdn.cn/1.jpg',
-  'https://img.yzcdn.cn/2.jpg'
-], 1);
+ImagePreview({
+  images: [
+    'https://img.yzcdn.cn/1.jpg',
+    'https://img.yzcdn.cn/2.jpg'
+  ],
+  startPosition: 1,
+  onClose() {
+    // do something
+  }
+});
 ```
 
-#### Close Manually
+#### Async Close
 
 ```javascript
-const instance = ImagePreview([
-  'https://img.yzcdn.cn/1.jpg',
-  'https://img.yzcdn.cn/2.jpg'
-]);
+const instance = ImagePreview({
+  images: [
+    'https://img.yzcdn.cn/1.jpg',
+    'https://img.yzcdn.cn/2.jpg'
+  ],
+  asyncClose: true
+});
 
 setTimeout(() => {
   instance.close();
@@ -40,6 +50,19 @@ setTimeout(() => {
 
 ### Arguments
 
+| Attribute | Description | Type | Default |
+|------|------|------|------|
+| images | Images URL list | `Array` | `[]` |
+| startPosition | Start position | `Number` | `0` |
+| showIndex | Whether to show index | `Boolean` | `true` |
+| showIndicators | Whether to show indicators | `Boolean` | `false` |
+| loop | Whether to enable loop | `Boolean` | `true` |
+| onClose | Close callback | `Function` | - |
+| asyncClose | Whether to enable async close | `Boolean` | `false` |
+
+### onClose Parematers
+
 | Attribute | Description | Type |
-|-----------|-----------|-----------|
-| imageUrls | Image URL list | `Array` |
+|------|------|------|
+| url | Url of current image | `Number` |
+| index | Index of current image | `String` |

@@ -1,4 +1,4 @@
-import Field from '../';
+import Field from '..';
 import { mount, later } from '../../../test/utils';
 
 test('input event', () => {
@@ -55,7 +55,7 @@ test('keypress event', () => {
   expect(calls.length).toBe(2);
 });
 
-test('render textarea', async() => {
+test('render textarea', async () => {
   const wrapper = mount(Field, {
     propsData: {
       type: 'textarea',
@@ -82,7 +82,7 @@ test('autosize textarea field', () => {
   expect(textarea.element.value).toEqual(value);
 });
 
-test('autosize object', async() => {
+test('autosize object', async () => {
   const wrapper = mount(Field, {
     propsData: {
       type: 'textarea',
@@ -108,4 +108,54 @@ test('blur method', () => {
   wrapper.vm.blur();
 
   expect(fn.mock.calls.length).toEqual(1);
+});
+
+test('focus method', () => {
+  const fn = jest.fn();
+  const wrapper = mount(Field);
+
+  wrapper.vm.$on('focus', fn);
+  wrapper.vm.focus();
+
+  expect(fn.mock.calls.length).toEqual(1);
+});
+
+test('maxlength', async () => {
+  const wrapper = mount(Field, {
+    attrs: {
+      maxlength: 3
+    },
+    propsData: {
+      value: 1234,
+      type: 'number'
+    }
+  });
+
+  const input = wrapper.find('input');
+  expect(input.element.value).toEqual('123');
+
+  input.element.value = 1234;
+  await later();
+  input.trigger('input');
+
+  expect(input.element.value).toEqual('123');
+  expect(wrapper.emitted('input')[0][0]).toEqual('123');
+});
+
+test('clearable', () => {
+  const wrapper = mount(Field, {
+    propsData: {
+      value: 'test',
+      clearable: true
+    }
+  });
+
+  expect(wrapper).toMatchSnapshot();
+  const input = wrapper.find('input');
+  input.trigger('focus');
+  expect(wrapper).toMatchSnapshot();
+
+  wrapper.find('.van-field__clear').trigger('touchstart');
+  expect(wrapper.emitted('input')[0][0]).toEqual('');
+  expect(wrapper.emitted('clear')).toBeTruthy();
 });

@@ -1,18 +1,28 @@
 <template>
   <div :class="b()">
-    <div :class="b('tip')" v-if="tip || $slots.tip">
+    <slot name="top" />
+    <div
+      v-if="tip || $slots.tip"
+      :class="b('tip')"
+    >
       {{ tip }}<slot name="tip" />
     </div>
     <div :class="b('bar')">
       <slot />
-      <div :class="b('price')">
+      <div :class="b('text')">
         <template v-if="hasPrice">
           <span>{{ label || $t('label') }}</span>
-          <span :class="b('price-integer')">{{ currency }}{{ priceInterger }}.</span>
-          <span :class="b('price-decimal')">{{ priceDecimal }}</span>
+          <span :class="b('price')">{{ currency }} {{ price | format }}</span>
         </template>
       </div>
-      <van-button :type="buttonType" :disabled="disabled" :loading="loading" @click="$emit('submit')">
+      <van-button
+        square
+        size="large"
+        :type="buttonType"
+        :disabled="disabled"
+        :loading="loading"
+        @click="$emit('submit')"
+      >
         {{ loading ? '' : buttonText }}
       </van-button>
     </div>
@@ -32,7 +42,6 @@ export default create({
 
   props: {
     tip: String,
-    type: Number,
     price: Number,
     label: String,
     loading: Boolean,
@@ -51,13 +60,12 @@ export default create({
   computed: {
     hasPrice() {
       return typeof this.price === 'number';
-    },
-    priceInterger() {
-      return Math.floor(this.price / 100);
-    },
-    priceDecimal() {
-      const decimal = Math.floor(this.price % 100);
-      return (decimal < 10 ? '0' : '') + decimal;
+    }
+  },
+
+  filters: {
+    format(price) {
+      return (price / 100).toFixed(2);
     }
   }
 });

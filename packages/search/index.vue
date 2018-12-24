@@ -1,6 +1,8 @@
 <template>
-  <div :class="b({ 'show-action': showAction })" :style="{ background }">
-    <icon name="search" />
+  <div
+    :class="b({ 'show-action': showAction })"
+    :style="{ background }"
+  >
     <field
       v-bind="$attrs"
       v-on="listeners"
@@ -8,10 +10,19 @@
       type="search"
       :value="value"
       :border="false"
-    />
-    <div v-if="showAction" :class="b('action')" >
+      left-icon="search"
+    >
+      <slot
+        name="left-icon"
+        slot="left-icon"
+      />
+    </field>
+    <div
+      v-if="showAction"
+      :class="b('action')"
+    >
       <slot name="action">
-        <div :class="b('cancel')" @click="onBack">{{ $t('cancel') }}</div>
+        <div @click="onBack">{{ $t('cancel') }}</div>
       </slot>
     </div>
   </div>

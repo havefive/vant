@@ -1,7 +1,18 @@
 import Vue from 'vue';
-import VueImagePreview from './image-preview';
+import VueImagePreview from './ImagePreview';
+import { isServer } from '../utils';
 
 let instance;
+
+const defaultConfig = {
+  images: [],
+  loop: true,
+  value: true,
+  showIndex: true,
+  asyncClose: false,
+  startPosition: 0,
+  showIndicators: false
+};
 
 const initInstance = () => {
   instance = new (Vue.extend(VueImagePreview))({
@@ -11,16 +22,26 @@ const initInstance = () => {
 };
 
 const ImagePreview = (images, startPosition = 0) => {
+  /* istanbul ignore if */
+  if (isServer) {
+    return;
+  }
+
   if (!instance) {
     initInstance();
   }
 
-  instance.images = images;
-  instance.startPosition = startPosition;
-  instance.value = true;
-  instance.$on('input', show => {
+  const options = Array.isArray(images) ? { images, startPosition } : images;
+
+  Object.assign(instance, defaultConfig, options);
+
+  instance.$once('input', show => {
     instance.value = show;
   });
+
+  if (options.onClose) {
+    instance.$once('close', options.onClose);
+  }
 
   return instance;
 };

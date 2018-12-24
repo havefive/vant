@@ -17,6 +17,8 @@
 <script>
 import Picker from '../picker';
 import create from '../utils/create';
+import { range } from '../utils';
+import PickerMixin from '../mixins/picker';
 
 const currentYear = new Date().getFullYear();
 const isValidDate = date => Object.prototype.toString.call(date) === '[object Date]' && !isNaN(date.getTime());
@@ -24,18 +26,16 @@ const isValidDate = date => Object.prototype.toString.call(date) === '[object Da
 export default create({
   name: 'datetime-picker',
 
+  mixins: [PickerMixin],
+
   components: {
     Picker
   },
 
   props: {
-    value: {},
-    title: String,
-    itemHeight: Number,
-    formatter: Function,
-    visibleItemCount: Number,
-    confirmButtonText: String,
-    cancelButtonText: String,
+    value: null,
+    minHour: Number,
+    minMinute: Number,
     type: {
       type: String,
       default: 'datetime'
@@ -48,6 +48,10 @@ export default create({
       type: String,
       default: 'YYYY.MM.DD HH时 mm分'
     },
+    formatter: {
+      type: Function,
+      default: (type, value) => value
+    },
     minDate: {
       type: Date,
       default: () => new Date(currentYear - 10, 0, 1),
@@ -58,13 +62,13 @@ export default create({
       default: () => new Date(currentYear + 10, 11, 31),
       validator: isValidDate
     },
-    minHour: {
-      type: Number,
-      default: 0
-    },
     maxHour: {
       type: Number,
       default: 23
+    },
+    maxMinute: {
+      type: Number,
+      default: 59
     }
   },
 
@@ -82,8 +86,11 @@ export default create({
     },
 
     innerValue(val) {
-      this.updateColumnValue(val);
       this.$emit('input', val);
+    },
+
+    columns() {
+      this.updateColumnValue(this.innerValue);
     }
   },
 
@@ -97,7 +104,7 @@ export default create({
           },
           {
             type: 'minute',
-            range: [0, 59]
+            range: [this.minMinute, this.maxMinute]
           }
         ];
       }
@@ -134,11 +141,11 @@ export default create({
     },
 
     columns() {
-      const results = this.ranges.map(({ type, range }) => {
-        const values = this.times(range[1] - range[0] + 1, index => {
-          let value = range[0] + index;
+      const results = this.ranges.map(({ type, range: rangeArr }) => {
+        const values = this.times(rangeArr[1] - rangeArr[0] + 1, index => {
+          let value = rangeArr[0] + index;
           value = value < 10 ? `0${value}` : `${value}`;
-          return this.formatter ? this.formatter(type, value) : value;
+          return this.formatter(type, value);
         });
 
         return {
@@ -151,6 +158,10 @@ export default create({
   },
 
   methods: {
+    pad(val) {
+      return `00${val}`.slice(-2);
+    },
+
     correctValue(value) {
       // validate value
       const isDateType = this.type !== 'time';
@@ -163,21 +174,16 @@ export default create({
 
       // time type
       if (!isDateType) {
-        const [hour, minute] = value.split(':');
-        let correctedHour = Math.max(hour, this.minHour);
-        correctedHour = Math.min(correctedHour, this.maxHour);
-        correctedHour = `00${correctedHour}`.slice(-2);
+        let [hour, minute] = value.split(':');
+        hour = this.pad(range(hour, this.minHour, this.maxHour));
+        minute = this.pad(range(minute, this.minMinute, this.maxMinute));
 
-        return `${correctedHour}:${minute}`;
+        return `${hour}:${minute}`;
       }
 
       // date type
-      const { maxYear, maxDate, maxMonth, maxHour, maxMinute } = this.getBoundary('max', value);
-      const { minYear, minDate, minMonth, minHour, minMinute } = this.getBoundary('min', value);
-      const minDay = new Date(minYear, minMonth - 1, minDate, minHour, minMinute);
-      const maxDay = new Date(maxYear, maxMonth - 1, maxDate, maxHour, maxMinute);
-      value = Math.max(value, minDay);
-      value = Math.min(value, maxDay);
+      value = Math.max(value, this.minDate.getTime());
+      value = Math.min(value, this.maxDate.getTime());
 
       return new Date(value);
     },
@@ -238,21 +244,7 @@ export default create({
     },
 
     getMonthEndDay(year, month) {
-      if (this.isShortMonth(month)) {
-        return 30;
-      } else if (month === 2) {
-        return this.isLeapYear(year) ? 29 : 28;
-      } else {
-        return 31;
-      }
-    },
-
-    isLeapYear(year) {
-      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-    },
-
-    isShortMonth(month) {
-      return [4, 6, 9, 11].indexOf(month) > -1;
+      return 32 - new Date(year, month - 1, 32).getDate();
     },
 
     onConfirm() {
@@ -260,12 +252,13 @@ export default create({
     },
 
     onChange(picker) {
-      const values = picker.getValues();
       let value;
 
       if (this.type === 'time') {
-        value = values.join(':');
+        const indexes = picker.getIndexes();
+        value = `${indexes[0] + this.minHour}:${indexes[1] + this.minMinute}`;
       } else {
+        const values = picker.getValues();
         const year = this.getTrueValue(values[0]);
         const month = this.getTrueValue(values[1]);
         const maxDate = this.getMonthEndDay(year, month);
@@ -280,10 +273,11 @@ export default create({
           hour = this.getTrueValue(values[3]);
           minute = this.getTrueValue(values[4]);
         }
+
         value = new Date(year, month - 1, date, hour, minute);
       }
-      value = this.correctValue(value);
-      this.innerValue = value;
+
+      this.innerValue = this.correctValue(value);
 
       this.$nextTick(() => {
         this.$nextTick(() => {
@@ -294,22 +288,24 @@ export default create({
 
     updateColumnValue(value) {
       let values = [];
+      const { formatter, pad } = this;
+
       if (this.type === 'time') {
-        const currentValue = value.split(':');
+        const pair = value.split(':');
         values = [
-          currentValue[0],
-          currentValue[1]
+          formatter('hour', pair[0]),
+          formatter('minute', pair[1])
         ];
       } else {
         values = [
-          `${value.getFullYear()}`,
-          `0${value.getMonth() + 1}`.slice(-2),
-          `0${value.getDate()}`.slice(-2)
+          formatter('year', `${value.getFullYear()}`),
+          formatter('month', pad(value.getMonth() + 1)),
+          formatter('day', pad(value.getDate()))
         ];
         if (this.type === 'datetime') {
           values.push(
-            `0${value.getHours()}`.slice(-2),
-            `0${value.getMinutes()}`.slice(-2)
+            formatter('hour', pad(value.getHours())),
+            formatter('minute', pad(value.getMinutes()))
           );
         }
         if (this.type === 'year-month') {

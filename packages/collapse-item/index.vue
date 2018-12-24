@@ -1,15 +1,35 @@
 <template>
-  <div
-    :class="[
-      b({ expanded }),
-      { 'van-hairline--top': index }
-    ]"
-  >
-    <cell :class="b('title')" is-link @click="onClick">
-      <slot name="title">{{ title }}</slot>
+  <div :class="[b(), { 'van-hairline--top': index }]">
+    <cell
+      v-bind="$props"
+      :class="b('title', { disabled, expanded })"
+      @click="onClick"
+    >
+      <slot
+        name="title"
+        slot="title"
+      />
+      <slot
+        name="icon"
+        slot="icon"
+      />
+      <slot name="value" />
+      <slot
+        name="right-icon"
+        slot="right-icon"
+      />
     </cell>
-    <div v-show="show" ref="wrapper" :class="b('wrapper')" @transitionend="onTransitionEnd">
-      <div ref="content" :class="b('content')">
+    <div
+      v-if="inited"
+      v-show="show"
+      ref="wrapper"
+      :class="b('wrapper')"
+      @transitionend="onTransitionEnd"
+    >
+      <div
+        ref="content"
+        :class="b('content')"
+      >
         <slot />
       </div>
     </div>
@@ -19,21 +39,27 @@
 <script>
 import { raf } from '../utils/raf';
 import create from '../utils/create';
-import findParent from '../mixins/find-parent';
+import CellMixin from '../mixins/cell';
+import FindParent from '../mixins/find-parent';
 
 export default create({
   name: 'collapse-item',
 
-  mixins: [findParent],
+  mixins: [CellMixin, FindParent],
 
   props: {
     name: [String, Number],
-    title: String
+    disabled: Boolean,
+    isLink: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data() {
     return {
-      show: null
+      show: null,
+      inited: null
     };
   },
 
@@ -66,6 +92,7 @@ export default create({
     this.findParent('van-collapse');
     this.items.push(this);
     this.show = this.expanded;
+    this.inited = this.expanded;
   },
 
   destroyed() {
@@ -80,6 +107,7 @@ export default create({
 
       if (expanded) {
         this.show = true;
+        this.inited = true;
       }
 
       this.$nextTick(() => {
@@ -88,7 +116,7 @@ export default create({
           return;
         }
 
-        const contentHeight = content.clientHeight + 'px';
+        const contentHeight = `${content.clientHeight}px`;
         wrapper.style.height = expanded ? 0 : contentHeight;
         raf(() => {
           wrapper.style.height = expanded ? contentHeight : 0;
@@ -99,6 +127,10 @@ export default create({
 
   methods: {
     onClick() {
+      if (this.disabled) {
+        return;
+      }
+
       const { parent } = this;
       const name = parent.accordion && this.currentName === parent.value ? '' : this.currentName;
       const expanded = !this.expanded;

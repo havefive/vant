@@ -1,16 +1,42 @@
 <template>
   <div :class="b()">
-    <div :class="b('toolbar')" class="van-hairline--top-bottom" v-if="showToolbar">
+    <div
+      v-if="showToolbar"
+      :class="b('toolbar')"
+      class="van-hairline--top-bottom"
+    >
       <slot>
-        <div :class="b('cancel')" @click="emit('cancel')">{{ cancelButtonText || $t('cancel') }}</div>
-        <div :class="b('title')" class="van-ellipsis" v-if="title" v-text="title" />
-        <div :class="b('confirm')" @click="emit('confirm')">{{ confirmButtonText || $t('confirm') }}</div>
+        <div
+          :class="b('cancel')"
+          @click="emit('cancel')"
+        >
+          {{ cancelButtonText || $t('cancel') }}
+        </div>
+        <div
+          v-if="title"
+          v-text="title"
+          :class="b('title')"
+          class="van-ellipsis"
+        />
+        <div
+          :class="b('confirm')"
+          @click="emit('confirm')"
+        >
+          {{ confirmButtonText || $t('confirm') }}
+        </div>
       </slot>
     </div>
-    <div v-if="loading" :class="b('loading')">
+    <div
+      v-if="loading"
+      :class="b('loading')"
+    >
       <loading />
     </div>
-    <div :class="b('columns')" :style="columnsStyle" @touchmove.prevent>
+    <div
+      :class="b('columns')"
+      :style="columnsStyle"
+      @touchmove.prevent
+    >
       <picker-column
         v-for="(item, index) in (simple ? [columns] : columns)"
         :key="index"
@@ -22,7 +48,11 @@
         :visible-item-count="visibleItemCount"
         @change="onChange(index)"
       />
-      <div :class="b('frame')" class="van-hairline--top-bottom" :style="frameStyle" />
+      <div
+        :class="b('frame')"
+        class="van-hairline--top-bottom"
+        :style="frameStyle"
+      />
     </div>
   </div>
 </template>
@@ -31,35 +61,22 @@
 import create from '../utils/create';
 import PickerColumn from './PickerColumn';
 import deepClone from '../utils/deep-clone';
+import PickerMixin from '../mixins/picker';
 
 export default create({
   name: 'picker',
+
+  mixins: [PickerMixin],
 
   components: {
     PickerColumn
   },
 
   props: {
-    title: String,
-    loading: Boolean,
-    showToolbar: Boolean,
-    confirmButtonText: String,
-    cancelButtonText: String,
-    visibleItemCount: {
-      type: Number,
-      default: 5
-    },
+    columns: Array,
     valueKey: {
       type: String,
       default: 'text'
-    },
-    itemHeight: {
-      type: Number,
-      default: 44
-    },
-    columns: {
-      type: Array,
-      default: () => []
     }
   },
 
@@ -96,8 +113,8 @@ export default create({
   methods: {
     setColumns() {
       const columns = this.simple ? [{ values: this.columns }] : this.columns;
-      columns.forEach((columns, index) => {
-        this.setColumnValues(index, deepClone(columns.values));
+      columns.forEach((column, index) => {
+        this.setColumnValues(index, deepClone(column.values));
       });
     },
 

@@ -12,21 +12,21 @@ Vue.use(Loading);
 #### Circular
 
 ```html
-<van-loading color="black" />
+<van-loading />
 <van-loading color="white" />
 ```
 
 #### Spinner
 
 ```html
-<van-loading type="spinner" color="black" />
+<van-loading type="spinner" />
 <van-loading type="spinner" color="white" />
 ```
 
 ### API
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
-| color | Can be set to `black` `white` | `String` | `black` |  |
-| type | Can be set to `circular` `spinner` | `String` | `circular` |
+|------|------|------|------|
+| color | Loading color | `String` | `#c9c9c9` |  |
+| type | Can be set to `spinner` | `String` | `circular` |
 | size | Size | `String` | `30px` |

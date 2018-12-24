@@ -2,11 +2,34 @@
 
 ### 脚手架
 
-我们提供了开箱即用的开发脚手架，通过 [vue-cli](https://github.com/vuejs/vue-cli) 即可快速创建一个基于 `Vant` 的项目。
+推荐使用 Vue 官方提供的脚手架 [Vue Cli 3](https://cli.vuejs.org/zh/) 创建项目
 
-```shell
-vue init youzan/vue-cli-template-vant my-project
+```bash
+# 安装 Vue Cli
+npm install -g @vue/cli
+
+# 创建一个项目
+vue create hello-world
 ```
+
+创建完成后，可以通过命令打开图形化界面
+
+```bash
+# 打开图形化界面
+vue ui
+```
+
+在图形化界面中，点击`依赖` -> `安装依赖`，然后将 `vant` 添加到依赖中即可。
+
+<img width="100%" style="box-shadow: 0 1px 1px rgba(0, 0, 0, .1); border-radius: 3px;" src="https://img.yzcdn.cn/vant/vue-cli-demo-201809032000.png" >
+
+### 示例工程
+
+我们提供了一个基于 Vue Cli 3 的示例工程，仓库地址为 [Vant Demo](https://github.com/youzan/vant-demo)，示例工程会帮助你了解如下内容：
+
+- 基于 vant 搭建单页面应用
+- 配置 rem 适配方案
+- 自定义主题色方案
 
 ### 安装
 
@@ -24,15 +47,13 @@ yarn add vant
 
 #### CDN
 
-访问下面的文件 URL，会自动重定向至最新版本的 CDN 链接，建议使用固定版本的 CDN 链接，避免升级时受到非兼容性更新的影响。
-
 ```html
 <!-- 引入样式 -->
-<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@1.4/lib/index.css">
 
 <!-- 引入组件 -->
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@1.4/lib/vant.min.js"></script>
 ```
 
 ### 引入组件
@@ -47,7 +68,7 @@ npm i babel-plugin-import -D
 ```
 
 ```js
-// 在 .babelrc 或 babel-loader 中添加插件配置
+// .babelrc 中配置
 // 注意：webpack 1 无需设置 libraryDirectory
 {
   "plugins": [
@@ -58,6 +79,17 @@ npm i babel-plugin-import -D
     }]
   ]
 }
+
+// 对于使用 babel7 的用户，可以在 babel.config.js 中配置
+module.exports = {
+  plugins: [
+    ['import', {
+      libraryName: 'vant',
+      libraryDirectory: 'es',
+      style: true
+    }, 'vant']
+  ]
+};
 ```
 
 接着你可以在代码中直接引入 Vant 组件，插件会自动将代码转化为方式二中的按需引入形式
@@ -74,8 +106,7 @@ import { Button, Cell } from 'vant';
 
 ```js
 import Button from 'vant/lib/button';
-import 'vant/lib/vant-css/base.css';
-import 'vant/lib/vant-css/button.css';
+import 'vant/lib/button/style';
 ```
  
 #### 方式三. 导入所有组件
@@ -83,7 +114,7 @@ import 'vant/lib/vant-css/button.css';
 ```js
 import Vue from 'vue';
 import Vant from 'vant';
-import 'vant/lib/vant-css/index.css';
+import 'vant/lib/index.css';
 
 Vue.use(Vant);
 ```
@@ -105,7 +136,7 @@ module.exports = {
   plugins: {
     'autoprefixer': {
       browsers: ['Android >= 4.0', 'iOS >= 7']
-    }
+    },
     'postcss-pxtorem': {
       rootValue: 37.5,
       propList: ['*']

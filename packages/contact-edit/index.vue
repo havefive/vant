@@ -4,8 +4,8 @@
       <field
         v-model="data.name"
         maxlength="30"
-        :label="$t('contact')"
-        :placeholder="$t('name')"
+        :label="$t('name')"
+        :placeholder="$t('nameEmpty')"
         :error="errorInfo.name"
         @focus="onFocus('name')"
       />
@@ -13,14 +13,28 @@
         v-model="data.tel"
         type="tel"
         :label="$t('tel')"
-        :placeholder="$t('telPlaceholder')"
+        :placeholder="$t('telEmpty')"
         :error="errorInfo.tel"
         @focus="onFocus('tel')"
       />
     </cell-group>
     <div :class="b('buttons')">
-      <van-button block :loading="isSaving" @click="onSave" type="primary">{{ $t('save') }}</van-button>
-      <van-button block :loading="isDeleting" @click="onDelete" v-if="isEdit">{{ $t('delete') }}</van-button>
+      <van-button
+        block
+        :loading="isSaving"
+        @click="onSave"
+        type="danger"
+      >
+        {{ $t('save') }}
+      </van-button>
+      <van-button
+        block
+        :loading="isDeleting"
+        @click="onDelete"
+        v-if="isEdit"
+      >
+        {{ $t('delete') }}
+      </van-button>
     </div>
   </div>
 </template>
@@ -28,8 +42,8 @@
 <script>
 import Field from '../field';
 import VanButton from '../button';
-import Dialog from '../dialog';
 import Toast from '../toast';
+import Dialog from '../dialog';
 import validateMobile from '../utils/validate/mobile';
 import create from '../utils/create';
 

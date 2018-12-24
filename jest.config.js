@@ -1,7 +1,8 @@
 module.exports = {
+  setupFiles: ['<rootDir>/test/jest.init.js'],
   moduleFileExtensions: ['js', 'vue'],
   transform: {
-    '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.js$': '<rootDir>/test/jest.transform.js',
     '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest'
   },
   moduleNameMapper: {
@@ -10,12 +11,12 @@ module.exports = {
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   collectCoverageFrom: [
     'packages/**/*.{js,vue}',
-    '!**/vant-css/**',
+    '!**/style/**',
     '!**/demo/**',
     '!**/locale/lang/**',
-    '!**/waterfall/**',
     '!**/sku/**',
-    '!**/lazyload/**'
+    '!**/waterfall/**',
+    '!**/icon/config/**'
   ],
   collectCoverage: true,
   coverageReporters: ['html', 'lcov', 'text-summary'],

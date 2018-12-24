@@ -7,19 +7,23 @@
       @touchmove="onTouchMove"
       @touchend="onTouchEnd"
       @touchcancel="onTouchEnd"
-      @transitionend="$emit('change', activeIndicator)"
+      @transitionend.stop="$emit('change', activeIndicator)"
     >
       <slot />
     </div>
-    <div
-      v-if="showIndicators && count > 1"
-      :class="b('indicators', { vertical })"
-    >
-      <i
-        v-for="index in count"
-        :class="b('indicator', { active: index - 1 === activeIndicator })"
-      />
-    </div>
+    <slot name="indicator">
+      <div
+        v-if="showIndicators && count > 1"
+        :class="b('indicators', { vertical })"
+        @transitionend.stop
+      >
+        <i
+          v-for="index in count"
+          :class="b('indicator', { active: index - 1 === activeIndicator })"
+          :style="index - 1 === activeIndicator ? indicatorStyle : null"
+        />
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -34,8 +38,12 @@ export default create({
   mixins: [Touch],
 
   props: {
+    width: Number,
+    height: Number,
     autoplay: Number,
     vertical: Boolean,
+    initialSwipe: Number,
+    indicatorColor: String,
     loop: {
       type: Boolean,
       default: true
@@ -43,10 +51,6 @@ export default create({
     touchable: {
       type: Boolean,
       default: true
-    },
-    initialSwipe: {
-      type: Number,
-      default: 0
     },
     showIndicators: {
       type: Boolean,
@@ -60,8 +64,8 @@ export default create({
 
   data() {
     return {
-      width: 0,
-      height: 0,
+      computedWidth: 0,
+      computedHeight: 0,
       offset: 0,
       active: 0,
       deltaX: 0,
@@ -77,6 +81,14 @@ export default create({
     if (!this.$isServer) {
       on(window, 'resize', this.onResize, true);
     }
+  },
+
+  activated() {
+    if (this.rendered) {
+      this.initialize();
+    }
+
+    this.rendered = true;
   },
 
   destroyed() {
@@ -115,7 +127,7 @@ export default create({
     },
 
     size() {
-      return this[this.vertical ? 'height' : 'width'];
+      return this[this.vertical ? 'computedHeight' : 'computedWidth'];
     },
 
     trackSize() {
@@ -126,11 +138,25 @@ export default create({
       return (this.active + this.count) % this.count;
     },
 
+    isCorrectDirection() {
+      const expect = this.vertical ? 'vertical' : 'horizontal';
+      return this.direction === expect;
+    },
+
     trackStyle() {
+      const mainAxis = this.vertical ? 'height' : 'width';
+      const crossAxis = this.vertical ? 'width' : 'height';
       return {
-        [this.vertical ? 'height' : 'width']: `${this.trackSize}px`,
+        [mainAxis]: `${this.trackSize}px`,
+        [crossAxis]: this[crossAxis] ? `${this[crossAxis]}px` : '',
         transitionDuration: `${this.swiping ? 0 : this.duration}ms`,
         transform: `translate${this.vertical ? 'Y' : 'X'}(${this.offset}px)`
+      };
+    },
+
+    indicatorStyle() {
+      return {
+        backgroundColor: this.indicatorColor
       };
     }
   },
@@ -141,8 +167,8 @@ export default create({
       clearTimeout(this.timer);
       if (this.$el) {
         const rect = this.$el.getBoundingClientRect();
-        this.width = rect.width;
-        this.height = rect.height;
+        this.computedWidth = this.width || rect.width;
+        this.computedHeight = this.height || rect.height;
       }
       this.swiping = true;
       this.active = active;
@@ -167,14 +193,11 @@ export default create({
     },
 
     onTouchMove(event) {
-      if (!this.touchable) return;
+      if (!this.touchable || !this.swiping) return;
 
       this.touchMove(event);
 
-      if (
-        (this.vertical && this.direction === 'vertical') ||
-        this.direction === 'horizontal'
-      ) {
+      if (this.isCorrectDirection) {
         event.preventDefault();
         event.stopPropagation();
         this.move(0, Math.min(Math.max(this.delta, -this.size), this.size));
@@ -182,14 +205,14 @@ export default create({
     },
 
     onTouchEnd() {
-      if (!this.touchable) return;
+      if (!this.touchable || !this.swiping) return;
 
-      if (this.delta) {
+      if (this.delta && this.isCorrectDirection) {
         const offset = this.vertical ? this.offsetY : this.offsetX;
-        this.move(offset > 50 ? (this.delta > 0 ? -1 : 1) : 0);
-        this.swiping = false;
+        this.move(offset > 0 ? (this.delta > 0 ? -1 : 1) : 0);
       }
 
+      this.swiping = false;
       this.autoPlay();
     },
 
@@ -197,25 +220,25 @@ export default create({
       const { delta, active, count, swipes, trackSize } = this;
       const atFirst = active === 0;
       const atLast = active === count - 1;
-      const outOfBounds = !this.loop && ((atFirst && (offset > 0 || move < 0)) || (atLast && (offset < 0 || move > 0)));
+      const outOfBounds =
+        !this.loop &&
+        ((atFirst && (offset > 0 || move < 0)) ||
+          (atLast && (offset < 0 || move > 0)));
 
       if (outOfBounds || count <= 1) {
         return;
       }
 
-      if (move && active + move >= -1 && active + move <= count) {
-        if (active === -1) {
-          swipes[count - 1].offset = 0;
-        }
-        swipes[0].offset = atLast && move > 0 ? trackSize : 0;
-
-        this.active += move;
+      if (swipes[0]) {
+        swipes[0].offset = atLast && (delta < 0 || move > 0) ? trackSize : 0;
       }
 
-      if (atFirst) {
-        swipes[count - 1].offset = delta > 0 || move < 0 ? -trackSize : 0;
-      } else if (atLast) {
-        swipes[0].offset = delta < 0 || move > 0 ? trackSize : 0;
+      if (swipes[count - 1]) {
+        swipes[count - 1].offset = atFirst && (delta > 0 || move < 0) ? -trackSize : 0;
+      }
+
+      if (move && active + move >= -1 && active + move <= count) {
+        this.active += move;
       }
 
       this.offset = offset - this.active * this.size;
@@ -226,7 +249,7 @@ export default create({
       this.correctPosition();
       setTimeout(() => {
         this.swiping = false;
-        this.move(index % this.count - this.active);
+        this.move((index % this.count) - this.active);
       }, 30);
     },
 
@@ -250,6 +273,7 @@ export default create({
         this.clear();
         this.timer = setTimeout(() => {
           this.swiping = true;
+          this.resetTouchStatus();
           this.correctPosition();
 
           setTimeout(() => {

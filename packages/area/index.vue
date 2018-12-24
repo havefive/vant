@@ -18,9 +18,12 @@
 <script>
 import create from '../utils/create';
 import Picker from '../picker';
+import PickerMixin from '../mixins/picker';
 
 export default create({
   name: 'area',
+
+  mixins: [PickerMixin],
 
   components: {
     Picker
@@ -28,10 +31,6 @@ export default create({
 
   props: {
     value: String,
-    title: String,
-    loading: Boolean,
-    itemHeight: Number,
-    visibleItemCount: Number,
     areaList: {
       type: Object,
       default: () => ({})
@@ -94,12 +93,17 @@ export default create({
       }
 
       const list = this[type];
-      result = Object.keys(list).map(code => ({
-        code,
-        name: list[code]
+      result = Object.keys(list).map(listCode => ({
+        code: listCode,
+        name: list[listCode]
       }));
 
       if (code) {
+        // oversea code
+        if (code[0] === '9' && type === 'city') {
+          code = '9';
+        }
+
         result = result.filter(item => item.code.indexOf(code) === 0);
       }
 
@@ -108,10 +112,15 @@ export default create({
 
     // get index by code
     getIndex(type, code) {
-      const compareNum = type === 'province' ? 2 : type === 'city' ? 4 : 6;
+      let compareNum = type === 'province' ? 2 : type === 'city' ? 4 : 6;
       const list = this.getList(type, code.slice(0, compareNum - 2));
-      code = code.slice(0, compareNum);
 
+      // oversea code
+      if (code[0] === '9' && type === 'province') {
+        compareNum = 1;
+      }
+
+      code = code.slice(0, compareNum);
       for (let i = 0; i < list.length; i++) {
         if (list[i].code.slice(0, compareNum) === code) {
           return i;
@@ -141,7 +150,7 @@ export default create({
       picker.setColumnValues(1, city);
 
       if (city.length && code.slice(2, 4) === '00') {
-        code = city[0].code;
+        [{ code }] = city;
       }
 
       picker.setColumnValues(2, this.getList('county', code.slice(0, 4)));
@@ -153,7 +162,36 @@ export default create({
     },
 
     getValues() {
-      return this.$refs.picker ? this.$refs.picker.getValues() : [];
+      return this.$refs.picker ? this.$refs.picker.getValues().filter(value => !!value) : [];
+    },
+
+    getArea() {
+      const values = this.getValues();
+      const area = {
+        code: '',
+        country: '',
+        province: '',
+        city: '',
+        county: ''
+      };
+
+      if (!values.length) {
+        return area;
+      }
+
+      const names = values.map(item => item.name);
+
+      area.code = values[values.length - 1].code;
+      if (area.code[0] === '9') {
+        area.country = names[1] || '';
+        area.province = names[2] || '';
+      } else {
+        area.province = names[0] || '';
+        area.city = names[1] || '';
+        area.county = names[2] || '';
+      }
+
+      return area;
     },
 
     reset() {

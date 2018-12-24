@@ -34,7 +34,7 @@ export default {
 
 #### 高级用法
 
-默认是每次加减为1，可以对组件设置`step`、`min`、`max`、`default-value`属性
+可以对组件设置`step`、`min`、`max`属性
 
 ```html
 <van-stepper
@@ -43,26 +43,26 @@ export default {
   :min="5"
   :max="40"
   :step="2"
-  :default-value="9"
 />
 ```
 
 ### API
 
-| 参数 | 说明 | 类型 | 默认值 |
-|-----------|-----------|-----------|-------------|
-| min | 最小值 | `String | Number` | `1` |
-| max | 最大值 | `String | Number` | - |
-| default-value | 默认值 | `String | Number` | `1` |
-| step | 步数 | `String | Number` | `1` |
-| integer | 是否只允许输入整数 | `Boolean` | `false` |
-| disabled | 是否禁用 | `Boolean` | `false` |
-| disable-input | 是否禁用input框 | `Boolean` | `false` |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+|------|------|------|------|------|
+| v-model | 当前输入值 | `String | Number` | 最小值 | - |
+| min | 最小值 | `String | Number` | `1` | - |
+| max | 最大值 | `String | Number` | - | - |
+| step | 步数 | `String | Number` | `1` | - |
+| integer | 是否只允许输入整数 | `Boolean` | `false` | 1.1.1 |
+| disabled | 是否禁用步进器 | `Boolean` | `false` | - |
+| disable-input | 是否禁用输入框 | `Boolean` | `false` | - |
+| async-change | 异步变更，为 `true` 时input值不变化，仅触发事件 | `Boolean` | `false` | - |
 
 ### Event
 
 | 事件名称 | 说明 | 回调参数 |
-|-----------|-----------|-----------|
+|------|------|------|
 | change | 当绑定值变化时触发的事件 | 当前组件的值 |
 | overlimit | 点击不可用的按钮时触发 | - |
 | plus | 点击增加按钮时触发 | - |

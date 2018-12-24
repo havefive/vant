@@ -5,15 +5,31 @@
       <span>Vant</span>
     </h1>
     <div class="mobile-switch-lang">
-      <span :class="{ active: $vantLang === 'en-US' }" @click="switchLang('en-US')">EN</span>
-      <span :class="{ active: $vantLang === 'zh-CN' }" @click="switchLang('zh-CN')">中文</span>
+      <span
+        :class="{ active: $vantLang === 'en-US' }"
+        @click="switchLang('en-US')"
+      >
+        EN
+      </span>
+      <span
+        :class="{ active: $vantLang === 'zh-CN' }"
+        @click="switchLang('zh-CN')"
+      >
+        中文
+      </span>
     </div>
     <h2 class="zanui-desc">{{ description }}</h2>
-    <div class="mobile-navs">
-      <div class="mobile-nav-item" v-for="(item, index) in navList" v-if="item.showInMobile" :key="index">
-        <mobile-nav v-for="(group, index) in item.groups" :group="group" :base="$vantLang" :nav-key="index" :key="index" />
-      </div>
-    </div>
+    <template
+      v-for="item in navList"
+      v-if="item.showInMobile"
+    >
+      <mobile-nav
+        v-for="(group, index) in item.groups"
+        :group="group"
+        :base="$vantLang"
+        :key="index"
+      />
+    </template>
   </div>
 </template>
 
@@ -23,14 +39,14 @@ import MobileNav from './MobileNav';
 import { setLang } from '../utils/lang';
 
 export default {
+  components: {
+    MobileNav
+  },
+
   data() {
     return {
       docConfig
     };
-  },
-
-  components: {
-    MobileNav
   },
 
   computed: {
@@ -53,8 +69,8 @@ export default {
 };
 </script>
 
-<style lang="postcss">
-@import '../../../packages/vant-css/src/common/var.css';
+<style lang="less">
+@import '../../../packages/style/var';
 
 .side-nav {
   width: 100%;
@@ -100,9 +116,9 @@ export default {
   top: 15px;
   right: 15px;
   font-size: 11px;
-  border: 1px solid $blue;
+  border: 1px solid @blue;
   border-radius: 3px;
-  color: $blue;
+  color: @blue;
   cursor: pointer;
 
   span {
@@ -112,8 +128,8 @@ export default {
     display: inline-block;
 
     &.active {
-      color: #fff;
-      background-color: $blue;
+      color: @white;
+      background-color: @blue;
     }
   }
 }

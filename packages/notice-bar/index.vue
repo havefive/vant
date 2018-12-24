@@ -5,13 +5,18 @@
     :style="barStyle"
     @click="$emit('click')"
   >
-    <div v-if="leftIcon" :class="b('left-icon')">
-      <img :src="leftIcon" >
-    </div>
-    <div :class="b('wrap')" ref="wrap">
+    <icon
+      v-if="leftIcon"
+      :class="b('left-icon')"
+      :name="leftIcon"
+    />
+    <div
+      ref="wrap"
+      :class="b('wrap')"
+    >
       <div
         ref="content"
-        :class="[b('content'), animationClass]"
+        :class="[b('content'), animationClass, { 'van-ellipsis': !scrollable }]"
         :style="contentStyle"
         @animationend="onAnimationEnd"
         @webkitAnimationEnd="onAnimationEnd"
@@ -67,7 +72,7 @@ export default create({
 
   computed: {
     iconName() {
-      return this.mode === 'closeable' ? 'close' : this.mode === 'link' ? 'arrow' : '';
+      return this.mode === 'closeable' ? 'cross' : this.mode === 'link' ? 'arrow' : '';
     },
 
     barStyle() {

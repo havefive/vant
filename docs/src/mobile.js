@@ -1,15 +1,17 @@
+import '../../packages/index.less';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import { progress } from '@vant/doc';
 import App from './WapApp';
 import routes from './router';
-import progress from 'nprogress';
-import '../../packages/vant-css/src/index.css';
-import 'vant-doc/src/helper/touch-simulator';
-import './components/nprogress.css';
+import '@vant/doc/helper/touch-simulator';
 
 const router = new VueRouter({
   mode: 'hash',
-  routes: routes(true)
+  routes: routes(true),
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { x: 0, y: 0 };
+  }
 });
 
 router.beforeEach((route, redirect, next) => {
@@ -19,9 +21,6 @@ router.beforeEach((route, redirect, next) => {
 
 router.afterEach(() => {
   progress.done();
-  if (router.currentRoute.name) {
-    window.scrollTo(0, 0);
-  }
   if (!router.currentRoute.redirectedFrom) {
     Vue.nextTick(() => window.syncPath());
   }
@@ -33,8 +32,8 @@ if (process.env.NODE_ENV !== 'production') {
   Vue.config.productionTip = false;
 }
 
-new Vue({ // eslint-disable-line
+new Vue({
+  el: '#app',
   render: h => h(App),
-  router,
-  el: '#app'
+  router
 });

@@ -2,16 +2,31 @@
   <demo-section>
     <demo-block :title="$t('basicUsage')">
       <van-tabbar v-model="active">
-        <van-tabbar-item icon="shop">{{ $t('tab') }}</van-tabbar-item>
-        <van-tabbar-item icon="chat" dot>{{ $t('tab') }}</van-tabbar-item>
-        <van-tabbar-item icon="records" info="5">{{ $t('tab') }}</van-tabbar-item>
-        <van-tabbar-item icon="gold-coin" info="20">{{ $t('tab') }}</van-tabbar-item>
+        <van-tabbar-item icon="home-o">{{ $t('tab') }}</van-tabbar-item>
+        <van-tabbar-item
+          icon="search"
+          dot
+        >
+          {{ $t('tab') }}
+        </van-tabbar-item>
+        <van-tabbar-item
+          icon="friends-o"
+          info="5"
+        >
+          {{ $t('tab') }}
+        </van-tabbar-item>
+        <van-tabbar-item
+          icon="setting-o"
+          info="20"
+        >
+          {{ $t('tab') }}
+        </van-tabbar-item>
       </van-tabbar>
     </demo-block>
 
     <demo-block :title="$t('title2')">
       <van-tabbar v-model="active2">
-        <van-tabbar-item icon="shop">
+        <van-tabbar-item info="3">
           <span>{{ $t('custom') }}</span>
           <img
             slot="icon"
@@ -19,8 +34,8 @@
             :src="props.active ? icon.active : icon.normal"
           >
         </van-tabbar-item>
-        <van-tabbar-item icon="chat">{{ $t('tab') }}</van-tabbar-item>
-        <van-tabbar-item icon="records">{{ $t('tab') }}</van-tabbar-item>
+        <van-tabbar-item icon="search">{{ $t('tab') }}</van-tabbar-item>
+        <van-tabbar-item icon="setting-o">{{ $t('tab') }}</van-tabbar-item>
       </van-tabbar>
     </demo-block>
   </demo-section>
@@ -50,7 +65,7 @@ export default {
 };
 </script>
 
-<style lang="postcss">
+<style lang="less">
 .demo-tabbar {
   .van-tabbar {
     position: relative;

@@ -4,6 +4,8 @@
 
 ```javascript
 import { Toast } from 'vant';
+
+Vue.use(Toast);
 ```
 
 ### 代码演示
@@ -11,9 +13,8 @@ import { Toast } from 'vant';
 #### 文字提示
 
 ```javascript
-Toast('我是提示文案，建议不超过十五字~');
+Toast('提示内容');
 ```
-
 
 #### 加载提示
 
@@ -24,14 +25,12 @@ Toast.loading({
 });
 ```
 
-
 #### 成功/失败提示
 
 ```javascript
 Toast.success('成功文案');
 Toast.fail('失败文案');
 ```
-
 
 #### 高级用法
 
@@ -79,11 +78,10 @@ toast1.clear();
 toast2.clear();
 ```
 
-
 ### 方法
 
 | 方法名 | 参数 | 返回值 | 介绍 |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
 | Toast | `options | message` | toast 实例 | 展示提示 |
 | Toast.loading | `options | message` | toast 实例 | 展示加载提示 |
 | Toast.success | `options | message` | toast 实例 | 展示成功提示 |
@@ -95,12 +93,12 @@ toast2.clear();
 
 ### Options
 
-| 参数 | 说明 | 类型 | 默认值 |
-|-----------|-----------|-----------|-------------|
-| type | 提示类型，可选值为 `loading` `success` `fail` `html` | `String` | `text` |
-| position | 位置，可选值为 `top` `middle` `bottom` | `String` | `middle` |
-| message | 内容 | `String` | `''` | - |
-| mask | 是否显示背景蒙层 | `Boolean` | `false` |
-| forbidClick | 是否禁止背景点击 | `Boolean` | `false` |
-| loadingType | 加载图标类型, 可选值为 `spinner` | `String` | `circular` |
-| duration | 展示时长(ms)，值为 0 时，toast 不会消失 | `Number` | `3000` |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+|------|------|------|------|------|
+| type | 提示类型，可选值为 `loading` `success` `fail` `html` | `String` | `text` | - |
+| position | 位置，可选值为 `top` `middle` `bottom` | `String` | `middle` | - |
+| message | 内容 | `String` | `''` | - | - |
+| mask | 是否显示背景蒙层 | `Boolean` | `false` | - |
+| forbidClick | 是否禁止背景点击 | `Boolean` | `false` | - |
+| loadingType | 加载图标类型, 可选值为 `spinner` | `String` | `circular` | 1.1.3 |
+| duration | 展示时长(ms)，值为 0 时，toast 不会消失 | `Number` | `3000` | - |

@@ -37,21 +37,21 @@ export default {
 
 ### API
 
-| 参数 | 说明 | 类型 | 默认值 |
-|-----------|-----------|-----------|-------------|
-| v-model | 当前组件是否显示 | `Boolean` | `false` |
-| overlay | 是否显示背景蒙层 | `Boolean` | `true` |
-| lock-scroll | 是否锁定背景滚动 | `Boolean` | `true` |
-| position | 可选值为 `top` `bottom` `right` `left` | `String` | - |
-| overlay-class | 自定义蒙层 class | `String` | `` |
-| overlay-style | 自定义蒙层样式 | `Object` | `` |
-| close-on-click-overlay | 点击蒙层是否关闭 Popup | `Boolean` | `true` |
-| transition | transition 名称 | `String` | `popup-slide` |
-| lazy-render | 是否在首次显示弹层时才渲染 DOM 节点 | `Boolean` | `true` |
-| get-container | 指定弹出层挂载的 HTML 节点 | `() => HTMLElement` | - |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+|------|------|------|------|------|
+| v-model | 当前组件是否显示 | `Boolean` | `false` | - |
+| overlay | 是否显示蒙层 | `Boolean` | `true` | - |
+| position | 位置，可选值为 `top` `bottom` <br> `right` `left` | `String` | - | - |
+| overlay-class | 自定义蒙层类名 | `String` | - | - |
+| overlay-style | 自定义蒙层样式 | `Object` | - | - |
+| transition | transition 名称 | `String` | - | - |
+| get-container | 指定挂载的节点，可以传入选择器，<br>或一个返回节点的函数 | `String | () => HTMLElement` | - | - |
+| close-on-click-overlay | 是否在点击蒙层后关闭 | `Boolean` | `true` | - |
+| lock-scroll | 是否锁定背景滚动 | `Boolean` | `true` | 1.0.0 |
+| lazy-render | 是否在显示弹层时才渲染节点 | `Boolean` | `true` | 1.1.5 |
 
 ### Event
 
 | 事件名 | 说明 | 参数 |
-|-----------|-----------|-----------|
+|------|------|------|
 | click-overlay | 点击蒙层时触发 | - |

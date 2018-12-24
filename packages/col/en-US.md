@@ -90,16 +90,17 @@ Setting `type` to `flex` to enable flex layout
 #### Row
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
+| type | Layout type, can be set to `flex` | `String` | - |
 | gutter | Grid spacing（px） | `String | Number` | - |
 | tag | Custom element tag | `String` | `div` |
 | justify | Flex main axis，can be set to  end/center/space-around/space-between | `String` | `start` |
 | align | Flex cross axis, be set to  center/bottom | `String` | `top` |
 
-#### Column
+#### Col
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
 | span | Number of column the grid spans | `String | Number` | - |
 | offset | Number of spacing on the left side of the grid | `String | Number` | - |
 | tag | Custom element tag | `String` | `div` |

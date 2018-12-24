@@ -38,20 +38,20 @@ Use `position` prop to set popup display position
 ### API
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
 | v-model | Whether to show popup | `Boolean` | `false` |
 | overlay | Whether to show overlay | `Boolean` | `true` |
 | position | Can be set to `top` `bottom` `right` `left` | `String` | - |
-| overlay-class | Custom overlay class | `String` | `` |
+| overlay-class | Custom overlay class | `String` | - |
 | overlay-style | Custom overlay style | `Object` | - |
 | close-on-click-overlay | Close popup when click overlay | `Boolean` | `true` |
 | transition | Transition | `String` | `popup-slide` |
 | lock-scroll | Whether to lock background scroll | `Boolean` | `true` |
 | lazy-render | Whether to lazy render util appeared | `Boolean` | `true` |
-| get-container | Return the mount node for Popup | `() => HTMLElement` | - |
+| get-container | Return the mount node for Popup | `String | () => HTMLElement` | - |
 
 ### Event
 
 | Event | Description | Arguments |
-|-----------|-----------|-----------|
+|------|------|------|
 | click-overlay | Triggered when click overlay | - |

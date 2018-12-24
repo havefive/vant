@@ -60,7 +60,7 @@ export default {
 ### API
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
 | area-list | Area List | `Object` | - |
 | address-info | Address Info | `Object` | `{}` |
 | search-result | Address search result | `Array` | `[]` |
@@ -73,11 +73,12 @@ export default {
 | is-saving | Whether to show save button loading status | `Boolean` | `false` |
 | is-deleting | Whether to show delete button loading status | `Boolean` | `false` |
 | tel-validator | The method to validate tel | `(tel: string) => boolean` | - |
+| validator | Custom validator | `(key, value) => string` | - | 1.3.9 |
 
 ### Event
 
 | Event | Description | Arguments |
-|-----------|-----------|-----------|
+|------|------|------|
 | save | Triggered when click save button | content：form content |
 | focus | Triggered when focus field | key: field name |
 | delete | Triggered when confirm delete | content：form content |
@@ -85,32 +86,33 @@ export default {
 | select-search | Triggered when select search result | value: search content |
 | change-area | Triggered when change area | values: area values |
 | change-detail | Triggered when address detail changed | value: address detail |
+| change-default | Triggered when switch default address | value: checked |
 
 ### Slot
 
 | Name | Description |
-|-----------|-----------|
+|------|------|
 | - | Custom content below postal |
 
 ### Data Structure
 
 #### addressInfo Data Structure
 | key | Description | Type |
-|-----------|-----------|-----------|
+|------|------|------|
 | id | Address Id | `String | Number` |
 | name | Name | `String` |
 | tel | Phone | `String` |
 | province | Province | `String` |
 | city | City | `String` |
 | county | County | `String` |
-| address_detail | Detailed Address | `String` |
-| area_code | Area code | `String` |
-| postal_code | Postal code | `String` |
-| is_default | Is default address | `Boolean` |
+| addressDetail | Detailed Address | `String` |
+| areaCode | Area code | `String` |
+| postalCode | Postal code | `String` |
+| isDefault | Is default address | `Boolean` |
 
 #### searchResult Data Structure
 | key | Description | Type |
-|-----------|-----------|-----------|
+|------|------|------|
 | name | Name | `String` |
 | address | Address | `String` |
 

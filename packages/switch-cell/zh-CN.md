@@ -50,16 +50,18 @@ export default {
 
 ### API
 
-| 参数 | 说明 | 类型 | 默认值 |
-|-----------|-----------|-----------|-------------|
-| v-model | 开关状态 | `Boolean` | - |
-| title | 左侧标题 |  `String` | `''` |
-| loading | 是否为加载状态 |  `Boolean` | `false` |
-| disabled | 是否为禁用状态 |  `Boolean` | `false` |
-| size | 开关尺寸 | `String` | `26px` |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+|------|------|------|------|------|
+| v-model | 开关状态 | `Boolean` | - | - |
+| title | 左侧标题 |  `String` | `''` | - |
+| loading | 是否为加载状态 |  `Boolean` | `false` | - |
+| disabled | 是否为禁用状态 |  `Boolean` | `false` | - |
+| size | 开关尺寸 | `String` | `24px` | 1.1.11 |
+| active-color | 开关时的背景色 | `String` | `#1989fa` | 1.5.0 |
+| inactive-color | 开关时的背景色 | `String` | `#fff` | 1.5.0 |
 
 ### Event
 
 | 事件名 | 说明 | 参数 |
-|-----------|-----------|-----------|
+|------|------|------|
 | change | 开关状态切换回调 | checked: 是否选中开关 |

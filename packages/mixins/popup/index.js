@@ -21,7 +21,7 @@ export default {
     // z-index
     zIndex: [String, Number],
     // return the mount node for popup
-    getContainer: Function,
+    getContainer: [String, Function],
     // prevent body scroll
     lockScroll: {
       type: Boolean,
@@ -61,10 +61,6 @@ export default {
     }
   },
 
-  created() {
-    this._popupId = 'popup-' + context.plusKey('id');
-  },
-
   mounted() {
     if (this.getContainer) {
       this.move();
@@ -83,6 +79,10 @@ export default {
 
   beforeDestroy() {
     this.close();
+
+    if (this.getContainer) {
+      this.$parent.$el.appendChild(this.$el);
+    }
   },
 
   deactivated() {
@@ -97,7 +97,7 @@ export default {
         return;
       }
 
-      // 如果属性中传入了`zIndex`，则覆盖`context`中对应的`zIndex`
+      // cover default zIndex
       if (this.zIndex !== undefined) {
         context.zIndex = this.zIndex;
       }
@@ -108,6 +108,7 @@ export default {
       if (this.lockScroll) {
         on(document, 'touchstart', this.touchStart);
         on(document, 'touchmove', this.onTouchMove);
+
         if (!context.lockCount) {
           document.body.classList.add('van-overflow-hidden');
         }
@@ -124,21 +125,32 @@ export default {
         context.lockCount--;
         off(document, 'touchstart', this.touchStart);
         off(document, 'touchmove', this.onTouchMove);
+
         if (!context.lockCount) {
           document.body.classList.remove('van-overflow-hidden');
         }
       }
 
       this.opened = false;
-      manager.close(this._popupId);
+      manager.close(this);
       this.$emit('input', false);
     },
 
     move() {
-      if (this.getContainer) {
-        this.getContainer().appendChild(this.$el);
+      let container;
+
+      const { getContainer } = this;
+      if (getContainer) {
+        container =
+          typeof getContainer === 'string'
+            ? document.querySelector(getContainer)
+            : getContainer();
       } else if (this.$parent) {
-        this.$parent.$el.appendChild(this.$el);
+        container = this.$parent.$el;
+      }
+
+      if (container) {
+        container.appendChild(this.$el);
       }
     },
 
@@ -170,16 +182,16 @@ export default {
     renderOverlay() {
       if (this.overlay) {
         manager.open(this, {
-          zIndex: context.plusKey('zIndex'),
+          zIndex: context.zIndex++,
           className: this.overlayClass,
           customStyle: this.overlayStyle
         });
       } else {
-        manager.close(this._popupId);
+        manager.close(this);
       }
 
       this.$nextTick(() => {
-        this.$el.style.zIndex = context.plusKey('zIndex');
+        this.$el.style.zIndex = context.zIndex++;
       });
     }
   }

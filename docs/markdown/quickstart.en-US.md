@@ -2,11 +2,26 @@
 
 ### Starter kit
 
-Use [vue-cli](https://github.com/vuejs/vue-cli) to create a vant project.
+We recomment to use [Vue Cli 3](https://cli.vuejs.org/zh/) to create a project.
 
-```shell
-vue init youzan/vue-cli-template-vant projectName
+```bash
+# Install Vue Cli
+npm install -g @vue/cli
+
+# Create a project
+vue create hello-world
 ```
+
+After the creation is complete, you can open the GUI by command.
+
+```bash
+# Open GUI
+vue ui
+```
+
+In the GUI, click on 'Dependencies' -> `Install Dependencies` and add `vant` to the dependencies.
+
+<img width="100%" style="box-shadow: 0 1px 1px rgba(0, 0, 0, .1); border-radius: 3px;" src="https://img.yzcdn.cn/vant/vue-cli-demo-201809030812.png" >
 
 ### Install
 
@@ -26,11 +41,11 @@ yarn add vant
 
 ```html
 <!-- import style -->
-<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@1.4/lib/index.css" />
 
 <!-- import script -->
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@1.4/lib/vant.min.js"></script>
 ```
 
 ### Usage
@@ -54,6 +69,17 @@ npm i babel-plugin-import -D
     }]
   ]
 }
+
+// For users who use babel7, that can be configured in babel.config.js
+module.exports = {
+  plugins: [
+    ['import', {
+      libraryName: 'vant',
+      libraryDirectory: 'es',
+      style: true
+    }, 'vant']
+  ]
+};
 ```
 
 Then you can import components from vant, equivalent to import manually below.
@@ -68,8 +94,7 @@ import { Button } from 'vant';
 
 ```js
 import Button from 'vant/lib/button';
-import 'vant/lib/vant-css/base.css';
-import 'vant/lib/vant-css/button.css';
+import 'vant/lib/button/style';
 ```
  
 #### 3. Import all components
@@ -77,7 +102,7 @@ import 'vant/lib/vant-css/button.css';
 ```js
 import Vue from 'vue';
 import Vant from 'vant';
-import 'vant/lib/vant-css/index.css';
+import 'vant/lib/index.css';
 
 Vue.use(Vant);
 ```
@@ -99,7 +124,7 @@ module.exports = {
   plugins: {
     'autoprefixer': {
       browsers: ['Android >= 4.0', 'iOS >= 7']
-    }
+    },
     'postcss-pxtorem': {
       rootValue: 37.5,
       propList: ['*']

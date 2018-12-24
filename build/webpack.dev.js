@@ -25,7 +25,8 @@ module.exports = {
       logLevel: 'warn'
     },
     hotClient: {
-      logLevel: 'warn'
+      logLevel: 'warn',
+      allEntries: true
     }
   },
   resolve: {
@@ -55,18 +56,24 @@ module.exports = {
         use: 'babel-loader'
       },
       {
-        test: /\.(css|postcss)$/,
+        test: /\.less$/,
         use: [
           'style-loader',
           'css-loader',
-          'postcss-loader'
+          'postcss-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              paths: [path.resolve(__dirname, 'node_modules')]
+            }
+          }
         ]
       },
       {
         test: /\.md$/,
         use: [
           'vue-loader',
-          'fast-vue-md-loader'
+          '@vant/markdown-loader'
         ]
       },
       {

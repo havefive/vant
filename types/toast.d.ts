@@ -9,6 +9,7 @@ export type ToastOptions = {
   position?: string;
   duration?: number;
   forbidClick?: boolean;
+  loadingType?: string;
   message?: ToastMessage;
 }
 
@@ -18,6 +19,7 @@ export interface VanToast extends Vue, VanPopupMixin {
   loadingType: string;
   forbidClick: boolean;
   message: ToastMessage;
+  clear(): void;
 }
 
 export interface Toast {

@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Dialog from '..';
-import DialogVue from '../dialog';
+import DialogVue from '../Dialog';
 import { mount, later, transitionStub } from '../../../test/utils';
 
 transitionStub();
 
-test('Dialog function call', async() => {
+test('Dialog function call', async () => {
   Dialog.close();
   Dialog.alert('1');
 

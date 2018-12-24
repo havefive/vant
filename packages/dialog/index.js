@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import VanDialog from './dialog';
+import VanDialog from './Dialog';
+import { isServer } from '../utils';
 
 let instance;
 
@@ -16,15 +17,19 @@ const initInstance = () => {
 };
 
 const Dialog = options => {
+  /* istanbul ignore if */
+  if (isServer) {
+    return Promise.resolve();
+  }
+
   return new Promise((resolve, reject) => {
     if (!instance) {
       initInstance();
     }
 
-    Object.assign(instance, {
+    Object.assign(instance, Dialog.currentOptions, options, {
       resolve,
-      reject,
-      ...options
+      reject
     });
   });
 };
@@ -37,6 +42,7 @@ Dialog.defaultOptions = {
   className: '',
   lockScroll: true,
   beforeClose: null,
+  messageAlign: '',
   confirmButtonText: '',
   cancelButtonText: '',
   showConfirmButton: true,
@@ -47,13 +53,9 @@ Dialog.defaultOptions = {
   }
 };
 
-Dialog.alert = options => Dialog({
-  ...Dialog.currentOptions,
-  ...options
-});
+Dialog.alert = Dialog;
 
 Dialog.confirm = options => Dialog({
-  ...Dialog.currentOptions,
   showCancelButton: true,
   ...options
 });

@@ -36,7 +36,7 @@ Use `pivot-text` to custom text，use `color` to custom bar color
 
 <van-progress
   pivot-text="Red"
-  color="#f3594b"
+  color="#f44"
   :percentage="50"
 />
 
@@ -51,11 +51,11 @@ Use `pivot-text` to custom text，use `color` to custom bar color
 ### API
 
 | Attribute | Description | Type | Default |
-|-----------|-----------|-----------|-------------|
+|------|------|------|------|
 | inactive | Whether to be gray | `Boolean` | `false` |
 | percentage | Percentage | `Number` | `false` |
 | show-pivot | Whether to show text | `Boolean` | `true` |
-| color | Color | `String` | `#38f` |
+| color | Color | `String` | `#1989fa` |
 | pivot-text | Text | `String` | percentage |
 | pivot-color | Text background color | `String` | inherit progress color |
 | text-color | Text color | `String` | `#fff` |

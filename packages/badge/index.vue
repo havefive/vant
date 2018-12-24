@@ -4,16 +4,26 @@
     :href="url"
     @click="onClick"
   >
-    <div v-if="isDef(info)" :class="b('info')">{{ info }}</div>
-    {{ title }}
+    <div :class="b('text')">
+      {{ title }}
+      <van-info
+        :info="info"
+        :class="b('info')"
+      />
+    </div>
   </a>
 </template>
 
 <script>
+import Info from '../info';
 import create from '../utils/create';
 
 export default create({
   name: 'badge',
+
+  components: {
+    [Info.name]: Info
+  },
 
   props: {
     url: String,
@@ -21,19 +31,36 @@ export default create({
     title: String
   },
 
-  beforeCreate() {
-    this.$parent.badges.push(this);
+  inject: ['vanBadgeGroup'],
+
+  created() {
+    this.parent.badges.push(this);
+  },
+
+  beforeDestroy() {
+    this.parent.badges = this.parent.badges.filter(item => item !== this);
   },
 
   computed: {
+    parent() {
+      if (process.env.NODE_ENV !== 'production' && !this.vanBadgeGroup) {
+        console.error('[Vant] Badge needs to be child of BadgeGroup');
+      }
+      return this.vanBadgeGroup;
+    },
+
     select() {
-      return this.$parent.badges.indexOf(this) === this.$parent.activeKey;
+      return (
+        this.parent.badges.indexOf(this) === +this.parent.activeKey
+      );
     }
   },
 
   methods: {
     onClick() {
-      this.$emit('click', this.$parent.badges.indexOf(this));
+      const index = this.parent.badges.indexOf(this);
+      this.$emit('click', index);
+      this.parent.$emit('change', index);
     }
   }
 });

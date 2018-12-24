@@ -1,6 +1,14 @@
 <template>
-  <cell center :title="title" :border="border" :class="b()">
-    <van-switch v-bind="$props" @input="$emit('input', $event)" />
+  <cell
+    center
+    :title="title"
+    :border="border"
+    :class="b()"
+  >
+    <van-switch
+      v-bind="$props"
+      @input="$emit('input', $event)"
+    />
   </cell>
 </template>
 
@@ -21,9 +29,11 @@ export default create({
     border: Boolean,
     loading: Boolean,
     disabled: Boolean,
+    activeColor: String,
+    inactiveColor: String,
     size: {
       type: String,
-      default: '26px'
+      default: '24px'
     }
   },
 

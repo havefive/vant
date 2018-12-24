@@ -1,6 +1,12 @@
 <template>
   <div class="app">
-    <van-doc :simulators="simulators" :current-simulator="currentSimulator" :config="config" :base="base">
+    <van-doc
+      :base="base"
+      :config="config"
+      active="Vue 组件"
+      :simulators="simulators"
+      :current-simulator="currentSimulator"
+    >
       <router-view @changeDemoURL="onChangeDemoURL" />
     </van-doc>
   </div>
@@ -40,7 +46,7 @@ export default {
 };
 </script>
 
-<style lang="postcss">
+<style lang="less">
 .van-doc-intro {
   text-align: center;
   font-family: "Dosis", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;

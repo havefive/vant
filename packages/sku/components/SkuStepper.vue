@@ -1,7 +1,7 @@
 <template>
   <div class="van-sku-stepper-stock">
     <div class="van-sku-stepper-container">
-      <div class="van-sku__stepper-title">{{ stepperTitle || $t('title') }}：</div>
+      <div class="van-sku__stepper-title">{{ stepperTitle || '购买数量' }}：</div>
       <stepper
         class="van-sku__stepper"
         v-model="currentNum"
@@ -12,8 +12,18 @@
         @change="onChange"
       />
     </div>
-    <div v-if="!hideStock" class="van-sku__stock">{{ $t('remain', stock) }}</div>
-    <div v-if="quotaText" class="van-sku__quota">{{ quotaText }}</div>
+    <div
+      v-if="!hideStock"
+      class="van-sku__stock"
+    >
+      {{ stockText }}
+    </div>
+    <div
+      v-if="!hideQuotaText && quotaText"
+      class="van-sku__quota"
+    >
+      {{ quotaText }}
+    </div>
   </div>
 </template>
 
@@ -32,15 +42,16 @@ export default create({
   },
 
   props: {
+    quota: Number,
+    hideQuotaText: Boolean,
+    quotaUsed: Number,
+    hideStock: Boolean,
     skuEventBus: Object,
     skuStockNum: Number,
     selectedSku: Object,
     selectedSkuComb: Object,
     selectedNum: Number,
     stepperTitle: String,
-    quota: Number,
-    quotaUsed: Number,
-    hideStock: Boolean,
     disableStepperInput: Boolean,
     customStepperConfig: Object
   },
@@ -73,14 +84,24 @@ export default create({
       return this.skuStockNum;
     },
 
+    stockText() {
+      const { stockFormatter } = this.customStepperConfig;
+      if (stockFormatter) return stockFormatter(this.stock);
+
+      return `剩余${this.stock}件`;
+    },
+
     quotaText() {
-      const { quotaText } = this.customStepperConfig;
+      const { quotaText, hideQuotaText } = this.customStepperConfig;
+
+      if (hideQuotaText) return '';
+
       let text = '';
 
       if (quotaText) {
         text = quotaText;
       } else if (this.quota > 0) {
-        text = this.$t('quota', this.quota);
+        text = `每人限购${this.quota}件`;
       }
 
       return text;

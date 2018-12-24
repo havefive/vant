@@ -1,21 +1,48 @@
 <template>
-  <transition name="van-slide-bottom">
-    <div v-if="shouldRender" v-show="value" :class="b({ 'withtitle': title })">
-      <div v-if="title" class="van-hairline--top-bottom" :class="b('header')">
+  <transition name="van-slide-up">
+    <div
+      v-if="shouldRender"
+      v-show="value"
+      :class="b({ 'withtitle': title })"
+    >
+      <div
+        v-if="title"
+        :class="b('header')"
+        class="van-hairline--top-bottom"
+      >
         <div v-text="title" />
-        <icon name="close" @click="onCancel" />
+        <icon
+          name="close"
+          @click="onCancel"
+        />
       </div>
-      <ul v-else class="van-hairline--bottom">
+      <ul
+        v-else
+        class="van-hairline--bottom"
+      >
         <li
           v-for="item in actions"
-          :class="[b('item', { disabled: item.disabled }), item.className, 'van-hairline--top']"
-          @click.stop="onClickItem(item)"
+          :class="[
+            b('item', { disabled: item.disabled || item.loading }),
+            item.className,
+            'van-hairline--top'
+          ]"
+          @click.stop="onSelect(item)"
         >
           <template v-if="!item.loading">
             <span :class="b('name')">{{ item.name }}</span>
-            <span :class="b('subname')" v-if="item.subname">{{ item.subname }}</span>
+            <span
+              v-if="item.subname"
+              :class="b('subname')"
+            >
+              {{ item.subname }}
+            </span>
           </template>
-          <loading v-else :class="b('loading')" size="20px" />
+          <loading
+            v-else
+            :class="b('loading')"
+            size="20px"
+          />
         </li>
       </ul>
       <div
@@ -24,7 +51,10 @@
         :class="[b('cancel'), 'van-hairline--top']"
         @click="onCancel"
       />
-      <div v-else :class="b('content')">
+      <div
+        v-else
+        :class="b('content')"
+      >
         <slot />
       </div>
     </div>
@@ -41,13 +71,10 @@ export default create({
   mixins: [Popup],
 
   props: {
-    value: Boolean,
     title: String,
+    value: Boolean,
+    actions: Array,
     cancelText: String,
-    actions: {
-      type: Array,
-      default: () => []
-    },
     overlay: {
       type: Boolean,
       default: true
@@ -59,9 +86,13 @@ export default create({
   },
 
   methods: {
-    onClickItem(item) {
-      if (item.callback && !item.disabled) {
-        item.callback(item);
+    onSelect(item) {
+      if (!item.disabled && !item.loading) {
+        if (item.callback) {
+          item.callback(item);
+        }
+
+        this.$emit('select', item);
       }
     },
 

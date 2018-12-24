@@ -13,7 +13,14 @@
       'min-height': type === 'textarea' && !autosize
     })"
   >
-    <slot name="label" slot="title" />
+    <slot
+      name="left-icon"
+      slot="icon"
+    />
+    <slot
+      name="label"
+      slot="title"
+    />
     <div :class="b('body')">
       <textarea
         v-if="type === 'textarea'"
@@ -38,14 +45,21 @@
         v-if="showClear"
         name="clear"
         :class="b('clear')"
-        @touchstart.prevent="$emit('input', '')"
+        @touchstart.prevent="onClear"
       />
-      <div v-if="$slots.icon || icon" :class="b('icon')" @click="onClickIcon">
+      <div
+        v-if="$slots.icon || icon"
+        :class="b('icon')"
+        @click="onClickIcon"
+      >
         <slot name="icon">
           <icon :name="icon" />
         </slot>
       </div>
-      <div v-if="$slots.button" :class="b('button')">
+      <div
+        v-if="$slots.button"
+        :class="b('button')"
+      >
         <slot name="button" />
       </div>
     </div>
@@ -59,6 +73,7 @@
 
 <script>
 import create from '../utils/create';
+import CellMixin from '../mixins/cell';
 import { isObj } from '../utils';
 
 export default create({
@@ -66,16 +81,12 @@ export default create({
 
   inheritAttrs: false,
 
+  mixins: [CellMixin],
+
   props: {
-    value: [String, Number],
-    icon: String,
-    label: String,
     error: Boolean,
-    center: Boolean,
-    isLink: Boolean,
     leftIcon: String,
     readonly: Boolean,
-    required: Boolean,
     clearable: Boolean,
     labelAlign: String,
     inputAlign: String,
@@ -85,10 +96,6 @@ export default create({
     type: {
       type: String,
       default: 'text'
-    },
-    border: {
-      type: Boolean,
-      default: true
     }
   },
 
@@ -105,6 +112,7 @@ export default create({
   },
 
   mounted() {
+    this.format();
     this.$nextTick(this.adjustSize);
   },
 
@@ -125,12 +133,29 @@ export default create({
   },
 
   methods: {
+    focus() {
+      this.$refs.input && this.$refs.input.focus();
+    },
+
     blur() {
       this.$refs.input && this.$refs.input.blur();
     },
 
+    // native maxlength not work when type = number
+    format(target = this.$refs.input) {
+      let { value } = target;
+      const { maxlength } = this.$attrs;
+
+      if (this.type === 'number' && this.isDef(maxlength) && value.length > maxlength) {
+        value = value.slice(0, maxlength);
+        target.value = value;
+      }
+
+      return value;
+    },
+
     onInput(event) {
-      this.$emit('input', event.target.value);
+      this.$emit('input', this.format(event.target));
     },
 
     onFocus(event) {
@@ -138,6 +163,7 @@ export default create({
       this.$emit('focus', event);
 
       // hack for safari
+      /* istanbul ignore if */
       if (this.readonly) {
         this.blur();
       }
@@ -153,6 +179,11 @@ export default create({
       this.onIconClick && this.onIconClick();
     },
 
+    onClear() {
+      this.$emit('input', '');
+      this.$emit('clear');
+    },
+
     onKeypress(event) {
       if (this.type === 'number') {
         const { keyCode } = event;
@@ -163,6 +194,8 @@ export default create({
         }
       }
 
+      // trigger blur after click keyboard search button
+      /* istanbul ignore next */
       if (this.type === 'search' && event.keyCode === 13) {
         this.blur();
       }

@@ -4,15 +4,12 @@ exports[`renders demo correctly 1`] = `
 <div>
   <div>
     <div class="van-search" style="background:#f2f2f2;">
-      <i class="van-icon van-icon-search" style="color:undefined;">
-        <!---->
-      </i>
-      <div placeholder="请输入商品名称" class="van-cell van-field">
-        <!---->
+      <div placeholder="请输入搜索关键词" class="van-cell van-cell--borderless van-field"><i class="van-icon van-icon-search van-cell__left-icon" style="color:undefined;font-size:undefined;">
+          <!---->
+          <!----></i>
         <!---->
         <div class="van-cell__value van-cell__value--alone">
-          <div class="van-field__body">
-            <input type="search" placeholder="请输入商品名称" value="" class="van-field__control">
+          <div class="van-field__body"><input type="search" placeholder="请输入搜索关键词" value="" class="van-field__control">
             <!---->
             <!---->
             <!---->
@@ -27,15 +24,12 @@ exports[`renders demo correctly 1`] = `
   <div>
     <form action="/">
       <div class="van-search van-search--show-action" style="background:#f2f2f2;">
-        <i class="van-icon van-icon-search" style="color:undefined;">
-          <!---->
-        </i>
-        <div placeholder="请输入商品名称" class="van-cell van-field">
-          <!---->
+        <div placeholder="请输入搜索关键词" class="van-cell van-cell--borderless van-field"><i class="van-icon van-icon-search van-cell__left-icon" style="color:undefined;font-size:undefined;">
+            <!---->
+            <!----></i>
           <!---->
           <div class="van-cell__value van-cell__value--alone">
-            <div class="van-field__body">
-              <input type="search" placeholder="请输入商品名称" value="" class="van-field__control">
+            <div class="van-field__body"><input type="search" placeholder="请输入搜索关键词" value="" class="van-field__control">
               <!---->
               <!---->
               <!---->
@@ -45,22 +39,19 @@ exports[`renders demo correctly 1`] = `
           <!---->
         </div>
         <div class="van-search__action">
-          <div class="van-search__cancel">取消</div>
+          <div>取消</div>
         </div>
       </div>
     </form>
   </div>
   <div>
     <div class="van-search van-search--show-action" style="background:#f2f2f2;">
-      <i class="van-icon van-icon-search" style="color:undefined;">
-        <!---->
-      </i>
-      <div class="van-cell van-field">
-        <!---->
+      <div placeholder="请输入搜索关键词" class="van-cell van-cell--borderless van-field"><i class="van-icon van-icon-search van-cell__left-icon" style="color:undefined;font-size:undefined;">
+          <!---->
+          <!----></i>
         <!---->
         <div class="van-cell__value van-cell__value--alone">
-          <div class="van-field__body">
-            <input type="search" value="" class="van-field__control">
+          <div class="van-field__body"><input type="search" placeholder="请输入搜索关键词" value="" class="van-field__control">
             <!---->
             <!---->
             <!---->
@@ -70,7 +61,9 @@ exports[`renders demo correctly 1`] = `
         <!---->
       </div>
       <div class="van-search__action">
-        <div>搜索</div>
+        <div>
+          搜索
+        </div>
       </div>
     </div>
   </div>

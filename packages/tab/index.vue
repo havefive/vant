@@ -1,13 +1,20 @@
 <template>
-  <div :class="b('pane')" v-show="isSelected">
+  <div
+    v-show="isSelected || parent.animated"
+    :class="b('pane')"
+  >
     <slot v-if="inited" />
-    <div v-if="$slots.title" ref="title">
+    <div
+      v-if="$slots.title"
+      ref="title"
+    >
       <slot name="title" />
     </div>
   </div>
 </template>
 
 <script>
+/* eslint-disable object-shorthand */
 import create from '../utils/create';
 import findParent from '../mixins/find-parent';
 

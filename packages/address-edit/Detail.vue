@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <cell :class="b()">
     <field
       v-on="$listeners"
-      ref="field"
-      rows="1"
       autosize
+      ref="field"
+      :rows="detailRows"
       :clearable="!isAndroid"
       type="textarea"
       maxlength="200"
@@ -23,16 +23,15 @@
       </span>
     </field>
     <cell
-      v-if="showSearchList"
-      v-for="express in searchResult"
+      v-for="express in searchList"
       :key="express.name + express.address"
       :title="express.name"
       :label="express.address"
-      icon="location"
+      icon="location-o"
       clickable
       @click="onSelect(express)"
     />
-  </div>
+  </cell>
 </template>
 
 <script>
@@ -51,6 +50,7 @@ export default create({
     value: String,
     error: Boolean,
     focused: Boolean,
+    detailRows: Number,
     searchResult: Array,
     showSearchResult: Boolean
   },
@@ -60,8 +60,11 @@ export default create({
   },
 
   computed: {
-    showSearchList() {
-      return this.showSearchResult && this.focused && this.searchResult.length;
+    searchList() {
+      if (this.showSearchResult && this.focused) {
+        return this.searchResult || [];
+      }
+      return [];
     },
 
     showIcon() {

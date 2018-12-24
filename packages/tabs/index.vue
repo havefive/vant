@@ -2,29 +2,55 @@
   <div :class="b([type])">
     <div
       ref="wrap"
+      :style="wrapStyle"
       :class="[
-        b('wrap', [position, { scrollable }]),
+        b('wrap', { scrollable }),
         { 'van-hairline--top-bottom': type === 'line' }
       ]"
     >
-      <div :class="b('nav', [type])" ref="nav">
-        <div v-if="type === 'line'" :class="b('line')" :style="lineStyle" />
+      <div
+        ref="nav"
+        :class="b('nav', [type])"
+        :style="navStyle"
+      >
+        <div
+          v-if="type === 'line'"
+          :class="b('line')"
+          :style="lineStyle"
+        />
         <div
           v-for="(tab, index) in tabs"
           ref="tabs"
           class="van-tab"
           :class="{
             'van-tab--active': index === curActive,
-            'van-tab--disabled': tab.disabled
+            'van-tab--disabled': tab.disabled,
+            'van-tab--complete': !ellipsis
           }"
+          :style="getTabStyle(tab, index)"
           @click="onClick(index)"
         >
-          <span class="van-ellipsis" ref="title">{{ tab.title }}</span>
+          <span
+            ref="title"
+            :class="{ 'van-ellipsis': ellipsis }"
+          >
+            {{ tab.title }}
+          </span>
         </div>
       </div>
     </div>
-    <div :class="b('content')" ref="content">
-      <slot />
+    <div
+      ref="content"
+      :class="b('content', { animated })"
+    >
+      <div
+        v-if="animated"
+        :class="b('track')"
+        :style="trackStyle"
+      >
+        <slot />
+      </div>
+      <slot v-else />
     </div>
   </div>
 </template>
@@ -46,9 +72,23 @@ export default create({
   },
 
   props: {
+    color: String,
     sticky: Boolean,
-    lineWidth: Number,
+    animated: Boolean,
+    offsetTop: Number,
     swipeable: Boolean,
+    ellipsis: {
+      type: Boolean,
+      default: true
+    },
+    lineWidth: {
+      type: Number,
+      default: null
+    },
+    lineHeight: {
+      type: Number,
+      default: null
+    },
     active: {
       type: [Number, String],
       default: 0
@@ -59,7 +99,7 @@ export default create({
     },
     duration: {
       type: Number,
-      default: 0.2
+      default: 0.3
     },
     swipeThreshold: {
       type: Number,
@@ -70,9 +110,11 @@ export default create({
   data() {
     return {
       tabs: [],
-      position: 'content-top',
+      position: '',
       curActive: null,
-      lineStyle: {},
+      lineStyle: {
+        backgroundColor: this.color
+      },
       events: {
         resize: false,
         sticky: false,
@@ -84,7 +126,39 @@ export default create({
   computed: {
     // whether the nav is scrollable
     scrollable() {
-      return this.tabs.length > this.swipeThreshold;
+      return this.tabs.length > this.swipeThreshold || !this.ellipsis;
+    },
+
+    wrapStyle() {
+      switch (this.position) {
+        case 'top':
+          return {
+            top: this.offsetTop + 'px',
+            position: 'fixed'
+          };
+        case 'bottom':
+          return {
+            top: 'auto',
+            bottom: 0
+          };
+        default:
+          return null;
+      }
+    },
+
+    navStyle() {
+      return {
+        borderColor: this.color
+      };
+    },
+
+    trackStyle() {
+      if (this.animated) {
+        return {
+          left: `${-1 * this.curActive * 100}%`,
+          transitionDuration: `${this.duration}s`
+        };
+      }
     }
   },
 
@@ -95,7 +169,11 @@ export default create({
       }
     },
 
-    tabs(tabs) {
+    color() {
+      this.setLine();
+    },
+
+    tabs() {
       this.correctActive(this.curActive || this.active);
       this.scrollIntoView();
       this.setLine();
@@ -106,7 +184,7 @@ export default create({
       this.setLine();
 
       // scroll to correct position
-      if (this.position === 'page-top' || this.position === 'content-bottom') {
+      if (this.position === 'top' || this.position === 'bottom') {
         scrollUtils.setScrollTop(window, scrollUtils.getElementTop(this.$el));
       }
     },
@@ -126,13 +204,14 @@ export default create({
 
     this.$nextTick(() => {
       this.handlers(true);
-      this.scrollIntoView();
+      this.scrollIntoView(true);
     });
   },
 
   activated() {
     this.$nextTick(() => {
       this.handlers(true);
+      this.scrollIntoView(true);
     });
   },
 
@@ -196,34 +275,51 @@ export default create({
 
     // adjust tab position
     onScroll() {
-      const scrollTop = scrollUtils.getScrollTop(window);
+      const scrollTop = scrollUtils.getScrollTop(window) + this.offsetTop;
       const elTopToPageTop = scrollUtils.getElementTop(this.$el);
       const elBottomToPageTop = elTopToPageTop + this.$el.offsetHeight - this.$refs.wrap.offsetHeight;
       if (scrollTop > elBottomToPageTop) {
-        this.position = 'content-bottom';
+        this.position = 'bottom';
       } else if (scrollTop > elTopToPageTop) {
-        this.position = 'page-top';
+        this.position = 'top';
       } else {
-        this.position = 'content-top';
+        this.position = '';
       }
+      const scrollParams = {
+        scrollTop,
+        isFixed: this.position === 'top'
+      };
+      this.$emit('scroll', scrollParams);
     },
 
     // update nav bar style
     setLine() {
       this.$nextTick(() => {
-        if (!this.$refs.tabs || this.type !== 'line') {
+        const { tabs } = this.$refs;
+
+        if (!tabs || !tabs[this.curActive] || this.type !== 'line') {
           return;
         }
 
-        const tab = this.$refs.tabs[this.curActive];
-        const width = this.lineWidth || tab.offsetWidth;
+        const tab = tabs[this.curActive];
+        const { lineWidth, lineHeight } = this;
+        const width = this.isDef(lineWidth) ? lineWidth : (tab.offsetWidth / 2);
         const left = tab.offsetLeft + (tab.offsetWidth - width) / 2;
 
-        this.lineStyle = {
+        const lineStyle = {
           width: `${width}px`,
+          backgroundColor: this.color,
           transform: `translateX(${left}px)`,
           transitionDuration: `${this.duration}s`
         };
+
+        if (this.isDef(lineHeight)) {
+          const height = `${lineHeight}px`;
+          lineStyle.height = height;
+          lineStyle.borderRadius = height;
+        }
+
+        this.lineStyle = lineStyle;
       });
     },
 
@@ -236,13 +332,26 @@ export default create({
     },
 
     setCurActive(active) {
-      if (active !== this.curActive) {
+      active = this.findAvailableTab(active, active < this.curActive);
+      if (this.isDef(active) && active !== this.curActive) {
         this.$emit('input', active);
 
         if (this.curActive !== null) {
           this.$emit('change', active, this.tabs[active].title);
         }
         this.curActive = active;
+      }
+    },
+
+    findAvailableTab(active, reverse) {
+      const diff = reverse ? -1 : 1;
+      let index = active;
+
+      while (index >= 0 && index < this.tabs.length) {
+        if (!this.tabs[index].disabled) {
+          return index;
+        }
+        index += diff;
       }
     },
 
@@ -258,21 +367,27 @@ export default create({
     },
 
     // scroll active tab into view
-    scrollIntoView() {
-      if (!this.scrollable || !this.$refs.tabs) {
+    scrollIntoView(immediate) {
+      const { tabs } = this.$refs;
+
+      if (!this.scrollable || !tabs || !tabs[this.curActive]) {
         return;
       }
 
-      const tab = this.$refs.tabs[this.curActive];
       const { nav } = this.$refs;
       const { scrollLeft, offsetWidth: navWidth } = nav;
-      const { offsetLeft, offsetWidth: tabWidth } = tab;
+      const { offsetLeft, offsetWidth: tabWidth } = tabs[this.curActive];
 
-      this.scrollTo(nav, scrollLeft, offsetLeft - (navWidth - tabWidth) / 2);
+      this.scrollTo(nav, scrollLeft, offsetLeft - (navWidth - tabWidth) / 2, immediate);
     },
 
     // animate the scrollLeft of nav
-    scrollTo(el, from, to) {
+    scrollTo(el, from, to, immediate) {
+      if (immediate) {
+        el.scrollLeft += to - from;
+        return;
+      }
+
       let count = 0;
       const frames = Math.round(this.duration * 1000 / 16);
       const animate = () => {
@@ -291,6 +406,31 @@ export default create({
         const title = this.$refs.title[index];
         title.parentNode.replaceChild(el, title);
       });
+    },
+
+    getTabStyle(item, index) {
+      const style = {};
+      const { color } = this;
+      const active = index === this.curActive;
+      const isCard = this.type === 'card';
+
+      if (color) {
+        if (!item.disabled && isCard && !active) {
+          style.color = color;
+        }
+        if (!item.disabled && isCard && active) {
+          style.backgroundColor = color;
+        }
+        if (isCard) {
+          style.borderColor = color;
+        }
+      }
+
+      if (this.scrollable && this.ellipsis) {
+        style.flexBasis = 88 / (this.swipeThreshold) + '%';
+      }
+
+      return style;
     }
   }
 });

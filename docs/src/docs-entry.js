@@ -1,7 +1,7 @@
+/* eslint-disable */
 // This file is auto gererated by build/build-entry.js
 export default {
   'changelog.en-US': () => import('../markdown/changelog.en-US.md'),
-  'changelog.generated': () => import('../markdown/changelog.generated.md'),
   'changelog.zh-CN': () => import('../markdown/changelog.zh-CN.md'),
   'contribution.zh-CN': () => import('../markdown/contribution.zh-CN.md'),
   'intro.en-US': () => import('../markdown/intro.en-US.md'),
@@ -27,8 +27,6 @@ export default {
   'card.zh-CN': () => import('../../packages/card/zh-CN.md'),
   'cell.en-US': () => import('../../packages/cell/en-US.md'),
   'cell.zh-CN': () => import('../../packages/cell/zh-CN.md'),
-  'cell-swipe.en-US': () => import('../../packages/cell-swipe/en-US.md'),
-  'cell-swipe.zh-CN': () => import('../../packages/cell-swipe/zh-CN.md'),
   'checkbox.en-US': () => import('../../packages/checkbox/en-US.md'),
   'checkbox.zh-CN': () => import('../../packages/checkbox/zh-CN.md'),
   'circle.en-US': () => import('../../packages/circle/en-US.md'),
@@ -65,6 +63,8 @@ export default {
   'nav-bar.zh-CN': () => import('../../packages/nav-bar/zh-CN.md'),
   'notice-bar.en-US': () => import('../../packages/notice-bar/en-US.md'),
   'notice-bar.zh-CN': () => import('../../packages/notice-bar/zh-CN.md'),
+  'notify.en-US': () => import('../../packages/notify/en-US.md'),
+  'notify.zh-CN': () => import('../../packages/notify/zh-CN.md'),
   'number-keyboard.en-US': () => import('../../packages/number-keyboard/en-US.md'),
   'number-keyboard.zh-CN': () => import('../../packages/number-keyboard/zh-CN.md'),
   'pagination.en-US': () => import('../../packages/pagination/en-US.md'),
@@ -95,10 +95,14 @@ export default {
   'stepper.zh-CN': () => import('../../packages/stepper/zh-CN.md'),
   'steps.en-US': () => import('../../packages/steps/en-US.md'),
   'steps.zh-CN': () => import('../../packages/steps/zh-CN.md'),
+  'style.en-US': () => import('../../packages/style/en-US.md'),
+  'style.zh-CN': () => import('../../packages/style/zh-CN.md'),
   'submit-bar.en-US': () => import('../../packages/submit-bar/en-US.md'),
   'submit-bar.zh-CN': () => import('../../packages/submit-bar/zh-CN.md'),
   'swipe.en-US': () => import('../../packages/swipe/en-US.md'),
   'swipe.zh-CN': () => import('../../packages/swipe/zh-CN.md'),
+  'swipe-cell.en-US': () => import('../../packages/swipe-cell/en-US.md'),
+  'swipe-cell.zh-CN': () => import('../../packages/swipe-cell/zh-CN.md'),
   'switch.en-US': () => import('../../packages/switch/en-US.md'),
   'switch.zh-CN': () => import('../../packages/switch/zh-CN.md'),
   'switch-cell.en-US': () => import('../../packages/switch-cell/en-US.md'),
@@ -115,8 +119,6 @@ export default {
   'tree-select.zh-CN': () => import('../../packages/tree-select/zh-CN.md'),
   'uploader.en-US': () => import('../../packages/uploader/en-US.md'),
   'uploader.zh-CN': () => import('../../packages/uploader/zh-CN.md'),
-  'vant-css.en-US': () => import('../../packages/vant-css/en-US.md'),
-  'vant-css.zh-CN': () => import('../../packages/vant-css/zh-CN.md'),
   'waterfall.en-US': () => import('../../packages/waterfall/en-US.md'),
   'waterfall.zh-CN': () => import('../../packages/waterfall/zh-CN.md')
 };
